@@ -155,7 +155,18 @@ public class StartService extends Service {
             }
 
             if (runningTask != null && !runningTask.isEmpty()) {
+
                 sPackageName = runningTask.get(runningTask.lastKey()).getPackageName();
+
+                //등록된 게임 패키지명 체크
+                if(GameInfo.getInstance().isGameItem(sPackageName)){
+
+                    Log.d(TAG, "실행:" + sPackageName);
+
+                }else {
+                    sPackageName = "";
+                }
+
             }
         }
 

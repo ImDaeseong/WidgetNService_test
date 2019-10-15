@@ -3,8 +3,6 @@ package com.daeseong.gameprocess;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
-import android.Manifest;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -26,6 +24,9 @@ public class MainActivity extends AppCompatActivity {
 
         //사용정보 접근 허용
         checkPermissions();
+
+        //게임 패키지 정보 설정
+        setGamePackageInfo();
 
         restartService = new RestartService();
 
@@ -62,6 +63,19 @@ public class MainActivity extends AppCompatActivity {
         if(resultCode == 1){
 
         }
+    }
+
+    private void setGamePackageInfo(){
+        GameInfo.getInstance().setGameItem("net.gameply.android.moonlight");
+        GameInfo.getInstance().setGameItem("com.kakaogames.moonlight");
+        GameInfo.getInstance().setGameItem("com.ncsoft.lineagem19");
+        GameInfo.getInstance().setGameItem("com.lilithgames.rok.gpkr");
+        GameInfo.getInstance().setGameItem("com.netmarble.lineageII");
+        GameInfo.getInstance().setGameItem("com.bluepotiongames.eosm");
+        GameInfo.getInstance().setGameItem("com.qjzj4399kr.google");
+        GameInfo.getInstance().setGameItem("com.netmarble.bnsmkr");
+        GameInfo.getInstance().setGameItem("com.zlongame.kr.langrisser");
+        GameInfo.getInstance().setGameItem("com.pearlabyss.blackdesertm");
     }
 
 }

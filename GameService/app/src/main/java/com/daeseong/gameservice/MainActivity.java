@@ -1,4 +1,4 @@
-package com.daeseong.gameprocess;
+package com.daeseong.gameservice;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         //사용정보 접근 허용
         checkPermissions();
@@ -31,9 +30,11 @@ public class MainActivity extends AppCompatActivity {
         restartService = new RestartService();
 
         intent = new Intent(MainActivity.this, StartService.class);
-        IntentFilter intentFilter = new IntentFilter("com.daeseong.gameprocess.StartService");
+        IntentFilter intentFilter = new IntentFilter("com.daeseong.gameservice.StartService");
         registerReceiver(restartService, intentFilter);
         startService(intent);
+
+        finish();
     }
 
     @Override
@@ -83,5 +84,4 @@ public class MainActivity extends AppCompatActivity {
         GameInfo.getInstance().setGameItem("com.zlongame.kr.langrisser");
         GameInfo.getInstance().setGameItem("com.pearlabyss.blackdesertm");
     }
-
 }

@@ -2,7 +2,6 @@ package com.daeseong.gameprocess;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -16,8 +15,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
-
-import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.Timer;

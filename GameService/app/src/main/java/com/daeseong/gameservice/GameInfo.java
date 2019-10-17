@@ -30,12 +30,14 @@ public class GameInfo {
             if(gameList.get(i).packageName.equals(packageName)){
                 return true;
             }
+
         }
+
         return false;
     }
-
 
     public static class GameItem{
         public String packageName = "";
     }
+
 }

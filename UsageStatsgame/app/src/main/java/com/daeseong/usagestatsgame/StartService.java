@@ -16,10 +16,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +24,6 @@ import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 
 public class StartService extends Service {
 

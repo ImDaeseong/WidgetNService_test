@@ -168,8 +168,6 @@ public class StartService extends Service {
         iteminfo.getInstance().setGameItem("com.netmarble.bnsmkr");
         iteminfo.getInstance().setGameItem("com.zlongame.kr.langrisser");
         iteminfo.getInstance().setGameItem("com.pearlabyss.blackdesertm");
-
-        iteminfo.getInstance().setGameItem("com.mediaweb.picaplay");
     }
 
     private void getListRunPackageName() {

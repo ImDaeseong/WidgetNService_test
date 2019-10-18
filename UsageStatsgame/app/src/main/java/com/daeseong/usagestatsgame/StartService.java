@@ -34,6 +34,8 @@ public class StartService extends Service {
 
     private HashMap<String, gameinfo> gameinfoMap = new HashMap<>();
 
+    private String lastpackagename;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -154,6 +156,8 @@ public class StartService extends Service {
 
     private void initData(){
 
+        Log.e(TAG, "initData");
+
         iteminfo.getInstance().setGameItem("net.gameply.android.moonlight");
         iteminfo.getInstance().setGameItem("com.kakaogames.moonlight");
         iteminfo.getInstance().setGameItem("com.ncsoft.lineagem19");
@@ -170,7 +174,7 @@ public class StartService extends Service {
 
         UsageStatsManager usageStatsManager = (UsageStatsManager)getSystemService(Context.USAGE_STATS_SERVICE);
         long time = System.currentTimeMillis();
-        List<UsageStats> usageStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 10000, time);
+        List<UsageStats> usageStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, 0, time);
         if (usageStats != null){
 
             SortedMap<Long, UsageStats> runningTask = new TreeMap<Long,UsageStats>();
@@ -183,13 +187,102 @@ public class StartService extends Service {
                 //항목에 있는 패키지명 등록
                 if(iteminfo.getInstance().isGameItem(runningTask.get(runningTask.lastKey()).getPackageName())) {
 
-                    Log.e(TAG, runningTask.get(runningTask.lastKey()).getPackageName());
+                    String packagename = runningTask.get(runningTask.lastKey()).getPackageName();
+
+                    if(!gameinfoMap.containsKey(packagename)){
+                        gameinfoMap.put(packagename, new gameinfo(packagename, getTimeDate(), getTimeDate()) );
+
+                        String sLog = "";
+                        sLog = String.format("시작된 앱이름:%s  시작시간:%s  끝시간:%s  ", packagename,  gameinfoMap.get(packagename).getStarttm(), gameinfoMap.get(packagename).getEndtm());
+                        Log.e(TAG, sLog);
+
+                        Message msg = handler.obtainMessage();
+                        msg.what = 0;
+                        msg.obj = sLog;
+                        handler.sendMessage(msg);
+
+                        lastpackagename = packagename;
+
+                    } else {
+                        String starttime =  gameinfoMap.get(packagename).getStarttm();
+                        gameinfoMap.put(packagename, new gameinfo(packagename, starttime, getTimeDate()) );
+
+                        String sLog = "";
+                        sLog = String.format("업데이트된 앱이름:%s  시작시간:%s  끝시간:%s  ", packagename,  gameinfoMap.get(packagename).getStarttm(), gameinfoMap.get(packagename).getEndtm());
+                        Log.e(TAG, sLog);
+
+                        Message msg = handler.obtainMessage();
+                        msg.what = 0;
+                        msg.obj = sLog;
+                        handler.sendMessage(msg);
+
+                        lastpackagename = packagename;
+                    }
+
+                }else {
+
+                    if(gameinfoMap.containsKey(lastpackagename)){
+                        String sLog = "";
+                        sLog = String.format("종료된 앱:%s  시작시간:%s  끝시간:%s  ", gameinfoMap.get(lastpackagename).getPackagename(),  gameinfoMap.get(lastpackagename).getStarttm(), gameinfoMap.get(lastpackagename).getEndtm());
+                        Log.e(TAG, sLog);
+
+                        Message msg = handler.obtainMessage();
+                        msg.what = 0;
+                        msg.obj = sLog;
+                        handler.sendMessage(msg);
+
+                        //미존재시 제거
+                        gameinfoMap.remove(lastpackagename);
+                        lastpackagename = "";
+                    }
+
+                }
+            } else {
+
+                if(gameinfoMap.containsKey(lastpackagename)){
+                    String sLog = "";
+                    sLog = String.format("종료된 앱:%s  시작시간:%s  끝시간:%s  ", gameinfoMap.get(lastpackagename).getPackagename(),  gameinfoMap.get(lastpackagename).getStarttm(), gameinfoMap.get(lastpackagename).getEndtm());
+                    Log.e(TAG, sLog);
+
+                    Message msg = handler.obtainMessage();
+                    msg.what = 0;
+                    msg.obj = sLog;
+                    handler.sendMessage(msg);
+
+                    //미존재시 제거
+                    gameinfoMap.remove(lastpackagename);
+                    lastpackagename = "";
+                }
+
+            }
+
+        }
+
+
+        /*
+        UsageStatsManager usageStatsManager = (UsageStatsManager)getSystemService(Context.USAGE_STATS_SERVICE);
+        long time = System.currentTimeMillis();
+        //List<UsageStats> usageStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 10000, time);
+        List<UsageStats> usageStats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, 0, time);
+        if (usageStats != null){
+
+            SortedMap<Long, UsageStats> runningTask = new TreeMap<Long,UsageStats>();
+            for (UsageStats item : usageStats) {
+                runningTask.put(item.getLastTimeUsed(), item);
+            }
+
+            if (runningTask != null && !runningTask.isEmpty()){
+
+                //항목에 있는 패키지명 등록
+                if(iteminfo.getInstance().isGameItem(runningTask.get(runningTask.lastKey()).getPackageName())) {
+
+                    //Log.e(TAG, runningTask.get(runningTask.lastKey()).getPackageName());
 
                     String packagename = runningTask.get(runningTask.lastKey()).getPackageName();
                     String lasttime = getTimeDate(runningTask.get(runningTask.lastKey()).getLastTimeUsed());
 
                     if(!gameinfoMap.containsKey(packagename)){
-                        gameinfoMap.put(packagename, new gameinfo(packagename, lasttime, getTimeDate()) );
+                        gameinfoMap.put(packagename, new gameinfo(packagename, getTimeDate(), getTimeDate()) );
                     }
 
                 }
@@ -216,12 +309,15 @@ public class StartService extends Service {
 
                 if(bpackagename){
 
-                    //존재시 시간 업데이트
-                    gameinfoMap.put(sKey, new gameinfo(packagename, starttime, getTimeDate()) );
+                    //String diffTime = getDiffMinute(starttime, endtime);
+                    //String diffSecond = getDiffSecond(starttime, endtime);
 
                     String sLog = "";
-                    sLog = String.format("업데이트된 앱:%s  시작시간:%s  끝시간:%s", packagename,  starttime, endtime);
+                    sLog = String.format("업데이트된 앱:%s  시작시간:%s  끝시간:%s  ", packagename,  starttime, endtime);
                     Log.e(TAG, sLog);
+
+                    //존재시 시간 업데이트
+                    gameinfoMap.put(sKey, new gameinfo(packagename, starttime, getTimeDate()) );
 
                     Message msg = handler.obtainMessage();
                     msg.what = 0;
@@ -230,8 +326,11 @@ public class StartService extends Service {
 
                 } else {
 
+                    //String diffTime = getDiffMinute(starttime, endtime);
+                    //String diffSecond = getDiffSecond(starttime, endtime);
+
                     String sLog = "";
-                    sLog = String.format("제거된 앱:%s  시작시간:%s  끝시간:%s", packagename,  starttime, endtime);
+                    sLog = String.format("제거된 앱:%s  시작시간:%s  끝시간:%s  ", packagename,  starttime, endtime);
                     Log.e(TAG, sLog);
 
                     Message msg = handler.obtainMessage();
@@ -246,6 +345,7 @@ public class StartService extends Service {
             }
 
         }
+        */
     }
 
     private static String getTimeDate() {
@@ -256,6 +356,34 @@ public class StartService extends Service {
     private static String getTimeDate(long date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         return dateFormat.format(new Date(date));
+    }
+
+    private static String getDiffMinute(String starttime, String endtime) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        String sMinute;
+
+        try {
+            long lminute = ((dateFormat.parse(endtime).getTime() - dateFormat.parse(starttime).getTime()) / 60000 );
+            sMinute = String.format("%d", lminute);
+        } catch (Exception ex) {
+            sMinute = String.format("0");
+        }
+        return sMinute;
+    }
+
+    private static String getDiffSecond(String starttime, String endtime) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        String sMinute;
+
+        try {
+            long lminute = ((dateFormat.parse(endtime).getTime() - dateFormat.parse(starttime).getTime()) / 1000 );
+            sMinute = String.format("%d", lminute);
+        } catch (Exception ex) {
+            sMinute = String.format("0");
+        }
+        return sMinute;
     }
 
 }

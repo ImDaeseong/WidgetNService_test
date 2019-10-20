@@ -46,7 +46,7 @@ public class StartService extends IntentService {
             }
         }, 10000, 10000);
 
-        // Stop & Destroy service
+        //서비스 종료
         stopSelf();
 
         Log.d(TAG, "onHandleIntent end");

@@ -2,12 +2,15 @@ package com.daeseong.timewidget;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,12 +21,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         //BroadcastReceiver
         restartService = new RestartService();
         IntentFilter intentFilter = new IntentFilter("com.daeseong.timewidget.TimeService");
         registerReceiver(restartService, intentFilter);
+
+        //widget info
+        //getWidgetInfo();
 
         //Shortcut
         setWidgetShortcut(this);
@@ -45,6 +50,25 @@ public class MainActivity extends AppCompatActivity {
 
         }catch (Exception ex){
             Log.e(TAG, "setWidgetShortcut:" + ex.getMessage().toString());
+        }
+
+    }
+
+    private void getWidgetInfo(){
+
+        try {
+
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+            List<AppWidgetProviderInfo> appWidgetProviderInfos = appWidgetManager.getInstalledProviders();
+
+            for (AppWidgetProviderInfo info : appWidgetProviderInfos) {
+
+                //Log.e(TAG, "설치된 앱위젯 정보:" + info.toString());
+                Log.e(TAG, "설치된 앱위젯 정보:" + info.provider.getPackageName());
+            }
+
+        }catch (Exception ex){
+            Log.e(TAG, ex.getMessage().toString());
         }
 
     }

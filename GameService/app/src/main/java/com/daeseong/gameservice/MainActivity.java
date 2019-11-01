@@ -1,7 +1,10 @@
 package com.daeseong.gameservice;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -13,6 +16,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //아이콘 숨기기
+        hideAppIcon();
 
         startService();
 
@@ -40,6 +46,13 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception ex){
             Log.e(TAG, ex.getMessage().toString());
         }
+
+    }
+
+    private void hideAppIcon(){
+
+        ComponentName componentName = new ComponentName("com.daeseong.gameservice", "com.daeseong.gameservice.MainActivity");
+        getPackageManager().setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 
     }
 

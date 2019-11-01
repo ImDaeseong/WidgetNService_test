@@ -13,14 +13,14 @@ public class ReStartReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        Log.e(TAG, "onReceive");
+
         try {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Intent in = new Intent(context, GameService.class);
-                context.startForegroundService(in);
+                context.startForegroundService(new Intent(context.getApplicationContext(), GameService.class));
             } else {
-                Intent in = new Intent(context, GameService.class);
-                context.startService(in);
+                context.startService(new Intent(context.getApplicationContext(), GameService.class));
             }
 
         }catch (Exception ex){

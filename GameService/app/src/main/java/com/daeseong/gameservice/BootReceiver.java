@@ -16,15 +16,11 @@ public class BootReceiver extends BroadcastReceiver {
         try {
 
             if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction().toString())) {
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Intent in = new Intent(context, GameService.class);
-                    context.startForegroundService(in);
+                    context.startForegroundService(new Intent(context.getApplicationContext(), GameService.class));
                 } else {
-                    Intent in = new Intent(context, GameService.class);
-                    context.startService(in);
+                    context.startService(new Intent(context.getApplicationContext(), GameService.class));
                 }
-
             }
 
         }catch (Exception ex){

@@ -1,11 +1,16 @@
 package com.daeseong.gameservice;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
@@ -41,8 +46,18 @@ public class GameService extends Service {
 
         handler.removeMessages(0);
 
-        //서비스 재시작
-        sendBroadcast(new Intent("com.daeseong.gameservice.ReStartServcie"));
+
+        //종료시 재시작 알람
+        /*
+        try {
+            AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+            Intent i = new Intent(this, ReStartReceiver.class);
+            PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
+            alarm.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 5000, pi);
+        }catch (Exception ex){
+            Log.d(TAG, ex.getMessage().toString());
+        }
+        */
 
         Log.i(TAG, "onDestroy");
     }
@@ -56,7 +71,8 @@ public class GameService extends Service {
 
         Log.i(TAG, "onStartCommand");
 
-        return START_NOT_STICKY;
+        return START_STICKY; //재생성과 onStartCommand() 호출
+        //return START_NOT_STICKY;//서비스 재 실행하지 않음
     }
 
     @Nullable
@@ -70,6 +86,22 @@ public class GameService extends Service {
         return super.onUnbind(intent);
     }
 
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+
+        Log.d(TAG, "onTaskRemoved");
+
+        /*
+        Intent restartServiceTask = new Intent(getApplicationContext(),this.getClass());
+        restartServiceTask.setPackage(getPackageName());
+        PendingIntent restartPendingIntent = PendingIntent.getService(getApplicationContext(), 1,restartServiceTask, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager myAlarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        myAlarmService.set(AlarmManager.ELAPSED_REALTIME,SystemClock.elapsedRealtime() + 1000, restartPendingIntent);
+        */
+
+        super.onTaskRemoved(rootIntent);
+    }
+
     @SuppressLint("NewApi")
     public void startTimer(){
 
@@ -81,13 +113,7 @@ public class GameService extends Service {
 
                     count++;
                     Log.i(TAG, "count:" + count);
-
-                    String sLog = "";
-                    sLog = String.format("count:%d", count);
-                    Message msg = handler.obtainMessage();
-                    msg.what = 0;
-                    msg.obj = sLog;
-                    handler.sendMessage(msg);
+                    showMessage(count);
                 }
             };
             timer = new Timer();
@@ -130,5 +156,18 @@ public class GameService extends Service {
             return true;
         }
     });
+
+    private void showMessage(long count){
+
+        try {
+            String sMsg = String.format("count:%d", count);
+            Message msg = handler.obtainMessage();
+            msg.what = 0;
+            msg.obj = sMsg;
+            handler.sendMessage(msg);
+        }catch (Exception ex){
+            Log.e(TAG, "Toast" + ex.getMessage().toString());
+        }
+    }
 
 }

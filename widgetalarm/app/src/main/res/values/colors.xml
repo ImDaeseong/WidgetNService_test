@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1B2836</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#ff9900</color>
+
+    <color name="selected_tab">#ffffff</color>
+    <color name="unselected_tab">#80919E</color>
+
+    <color name="divideline">#1B2836</color>
+
+    <color name="statusbar_bg">#1B2836</color>
+
+    <color name="floatingbtn">#80000000</color>
+</resources>

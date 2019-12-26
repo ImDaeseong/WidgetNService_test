@@ -32,7 +32,7 @@ public class AlarmService extends Service {
 
         if (Build.VERSION.SDK_INT >= 26) {
 
-            String channelID = "channelID_01";
+            String channelID = "AlarmServicechannelID";
             NotificationChannel notificationChannel = new NotificationChannel(channelID,"알람", NotificationManager.IMPORTANCE_DEFAULT);
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(notificationChannel);
 
@@ -43,7 +43,13 @@ public class AlarmService extends Service {
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .build();
             startForeground(1, notification);
+            //stopForeground(true);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             stopForeground(true);
+        } else {
+            stopSelf();
         }
 
         String sParam = intent.getExtras().getString("alarm");

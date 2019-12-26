@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Alarmservice</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="btn_start">start</string>
+    <string name="btn_stop">stop</string>
+</resources>

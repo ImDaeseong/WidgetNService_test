@@ -25,7 +25,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".TimeWidget">
+        <receiver android:name=".TimeWidget" android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -40,7 +40,7 @@
             android:enabled="true">
         </service>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

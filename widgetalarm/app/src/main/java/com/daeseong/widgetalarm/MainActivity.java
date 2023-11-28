@@ -1,7 +1,6 @@
 package com.daeseong.widgetalarm;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
@@ -9,7 +8,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //widget info
-        //getWidgetInfo();
+        getWidgetInfo();
 
         //Shortcut
         setWidgetShortcut(this);
@@ -41,13 +39,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, "setWidgetShortcut:" + ex.getMessage().toString());
         }
-
     }
 
-    private void getWidgetInfo(){
+    private void getWidgetInfo() {
 
         try {
 
@@ -60,9 +57,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "설치된 앱위젯 정보:" + info.provider.getPackageName());
             }
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, ex.getMessage().toString());
         }
-
     }
 }

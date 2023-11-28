@@ -11,56 +11,69 @@ import android.widget.RemoteViews
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class AlarmWidget : AppWidgetProvider() {
 
     private val tag = AlarmWidget::class.java.simpleName
 
     private var pendingIntent: PendingIntent? = null
 
-    private val lMin = 1000 * 60 * 1 // Millisec * Second * Minute
-
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
 
-        Log.i(tag, "onUpdate")
+        Log.e(tag, "onUpdate")
 
-        for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
+        //1분에 한번씩 시간 업데이트
+        val lMin: Long = 1000 * 60 * 1 // Millisec * Second * Minute
+
+        try {
+            for (appWidgetId in appWidgetIds) {
+                updateAppWidget(context, appWidgetManager, appWidgetId)
+            }
+
+            val intent = Intent(context, AlarmReceiver::class.java)
+            pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), lMin, pendingIntent)
+
+        } catch (ex: Exception) {
+            Log.e(tag, ex.message.toString())
         }
-
-        val intent = Intent(context, AlarmReceiver::class.java)
-        pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), lMin.toLong(), pendingIntent)
     }
 
     override fun onEnabled(context: Context) {
-        Log.i(tag, "onEnabled")
+        Log.e(tag, "onEnabled")
     }
 
     override fun onDisabled(context: Context) {
 
-        Log.i(tag, "onDisabled")
+        Log.e(tag, "onDisabled")
 
         try {
-
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarmManager.cancel(pendingIntent)
+            pendingIntent?.let {
+                alarmManager.cancel(it)
+            }
         } catch (ex: Exception) {
-            Log.i(tag, ex.message.toString())
+            Log.e(tag, ex.message.toString())
         }
     }
-}
 
-internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+    fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
 
-    val views = RemoteViews(context.packageName, R.layout.alarm_widget)
-    views.setTextViewText(R.id.tv1, getTimeDate())
-    appWidgetManager.updateAppWidget(appWidgetId, views)
-}
+        Log.e(tag, "updateAppWidget")
 
-private fun getTimeDate(): String? {
-    val dateFormat = SimpleDateFormat("HH:mm:ss")
-    return dateFormat.format(Date())
+        try {
+            val remoteViews = RemoteViews(context.packageName, R.layout.alarm_widget)
+            remoteViews.setTextViewText(R.id.tv1, getTimeDate())
+            appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
+        } catch (ex: Exception) {
+            Log.e(tag, ex.message.toString())
+        }
+    }
+
+    fun getTimeDate(): String {
+        val dateFormat = SimpleDateFormat("HH:mm:ss")
+        return dateFormat.format(Date())
+    }
 }

@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViews;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -17,11 +16,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i(TAG, getTimeDate());
+
+        Log.e(TAG, getTimeDate());
+
         updateViews(context);
     }
 
-    private void updateViews(Context context){
+    private void updateViews(Context context) {
 
         try {
 
@@ -32,8 +33,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             ComponentName componentName = new ComponentName(context, AlarmWidget.class);
             appWidgetManager.updateAppWidget(componentName, remoteViews);
 
-        }catch (Exception ex){
-            Log.i(TAG, ex.getMessage().toString());
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage().toString());
         }
     }
 

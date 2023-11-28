@@ -3,6 +3,10 @@
     package="com.daeseong.alarmservice">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" android:minSdkVersion="33" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,14 +27,14 @@
         <service
             android:name=".AlarmService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <receiver
             android:name=".AlarmReceiver"
             android:enabled="true"
             android:exported="true" />
 
-        <receiver android:name=".AlarmAppWidget">
+        <receiver android:name=".AlarmAppWidget" android:label="Alarm Widget" android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

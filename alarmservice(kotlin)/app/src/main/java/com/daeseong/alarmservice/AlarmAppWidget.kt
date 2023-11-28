@@ -5,41 +5,56 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.RemoteViews
-
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class AlarmAppWidget : AppWidgetProvider() {
 
+    private val tag = AlarmAppWidget::class.java.simpleName
+
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
 
+        Log.e(tag, "onUpdate")
+
         for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
+            val remoteViews = RemoteViews(context.packageName, R.layout.alarm_app_widget)
+            setOnClickPendingIntent(context, remoteViews, R.id.button1, appWidgetId, "start")
+            setOnClickPendingIntent(context, remoteViews, R.id.button2, appWidgetId, "stop")
+            appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
         }
     }
 
-    override fun onEnabled(context: Context) {
+    private fun setOnClickPendingIntent(context: Context, remoteViews: RemoteViews, resID: Int, appWidgetId: Int, action: String) {
+
+        Log.e(tag, "setOnClickPendingIntent")
+
+        val intent = Intent(context, AlarmAppWidget::class.java)
+        intent.action = action
+        val pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, PendingIntent.FLAG_IMMUTABLE)
+        remoteViews.setOnClickPendingIntent(resID, pendingIntent)
     }
 
-    override fun onDisabled(context: Context) {
+    override fun onReceive(context: Context, intent: Intent) {
+        super.onReceive(context, intent)
+
+        if (intent.action != null && (intent.action == "start" || intent.action == "stop")) {
+            val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+            handleWidgetAction(context, intent.action!!, appWidgetId)
+        }
     }
-}
 
-internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+    // Widget 버튼 클릭 이벤트
+    private fun handleWidgetAction(context: Context, action: String, appWidgetId: Int) {
 
-    val views = RemoteViews(context.packageName, R.layout.alarm_app_widget)
+        val nType = when (action) {
+            "start" -> 1
+            "stop" -> 0
+            else -> -1
+        }
 
-    views.setTextViewText(R.id.button1, 1.toString())
-    views.setTextViewText(R.id.button2, 2.toString())
-    setOnClickPendingIntent(context, views, R.id.button1, 1)
-    setOnClickPendingIntent(context, views, R.id.button2, 2)
-
-    appWidgetManager.updateAppWidget(appWidgetId, views)
-}
-
-private fun setOnClickPendingIntent(context: Context, remoteViews: RemoteViews, resID: Int, nType: Int) {
-
-    val intent = Intent(context, MainActivity::class.java)
-    intent.putExtra("type", nType)
-    val pendingIntent = PendingIntent.getActivity(context, nType, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    remoteViews.setOnClickPendingIntent(resID, pendingIntent)
+        val intent = Intent("com.daeseong.alarmservice.ACTION_WIDGET_CLICK")
+        intent.putExtra("type", nType)
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+    }
 }

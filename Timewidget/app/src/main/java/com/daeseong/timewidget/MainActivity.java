@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,11 +27,10 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(restartService, intentFilter);
 
         //widget info
-        //getWidgetInfo();
+        getWidgetInfo();
 
         //Shortcut
         setWidgetShortcut(this);
-
     }
 
     private void setWidgetShortcut(Context context) {
@@ -48,13 +46,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, "setWidgetShortcut:" + ex.getMessage().toString());
         }
-
     }
 
-    private void getWidgetInfo(){
+    private void getWidgetInfo() {
 
         try {
 
@@ -67,10 +64,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "설치된 앱위젯 정보:" + info.provider.getPackageName());
             }
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, ex.getMessage().toString());
         }
-
     }
-
 }

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 
-
 class AlarmReceiver : BroadcastReceiver() {
 
     private val tag = AlarmReceiver::class.java.simpleName
@@ -14,21 +13,20 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
         try {
-
-            val param = intent.extras!!.getString("alarm")
-            //Log.e(tag, "param:$param")
-
-            val service = Intent(context, AlarmService::class.java)
-            service.putExtra("alarm", param)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(service)
-            } else {
-                context.startService(service)
-            }
+            val value = intent.extras?.getString("alarm")
+            val serviceIntent = Intent(context, AlarmService::class.java)
+            serviceIntent.putExtra("alarm", value)
+            startServiceCompat(context, serviceIntent)
         } catch (ex: Exception) {
             Log.e(tag, ex.message.toString())
         }
     }
 
+    private fun startServiceCompat(context: Context, intent: Intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent)
+        } else {
+            context.startService(intent)
+        }
+    }
 }

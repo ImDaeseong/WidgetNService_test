@@ -16,7 +16,8 @@ public class AlarmService extends Service {
 
     private static final String TAG = AlarmService.class.getSimpleName();
 
-    private MediaPlayer mediaPlayer = null;
+    private static final int NOTIFICATION_ID = 1;
+    private MediaPlayer mediaPlayer;
 
     @Override
     public void onCreate() {
@@ -30,41 +31,21 @@ public class AlarmService extends Service {
 
         Log.e(TAG, "onStartCommand");
 
-        if (Build.VERSION.SDK_INT >= 26) {
-
-            String channelID = "AlarmServicechannelID";
-            NotificationChannel notificationChannel = new NotificationChannel(channelID,"알람", NotificationManager.IMPORTANCE_DEFAULT);
-            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).createNotificationChannel(notificationChannel);
-
-            Notification notification = new NotificationCompat.Builder(this, channelID)
-                    .setContentTitle("알림")
-                    .setContentText("기상 시간입니다.")
-                    .setAutoCancel(true)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .build();
-            startForeground(1, notification);
-            //stopForeground(true);
-        }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            stopForeground(true);
+            createNotificationChannel();
+            Notification notification = createNotification();
+            startForeground(NOTIFICATION_ID, notification);
         } else {
+            stopForeground(true);
             stopSelf();
         }
 
-        String sParam = intent.getExtras().getString("alarm");
-        if(sParam.equals("on")){
+        String val = intent.getStringExtra("alarm");
+        Log.e(TAG, "alarm:" + val);
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    startPlay();
-                }
-            }).start();
-
-            startActivity(new Intent(AlarmService.this, MainActivity.class));
-
-        } else  {
+        if ("on".equals(val)) {
+            startPlay();
+        } else {
             stopPlay();
         }
 
@@ -76,7 +57,6 @@ public class AlarmService extends Service {
         super.onDestroy();
 
         Log.e(TAG, "onDestroy");
-
     }
 
     @Nullable
@@ -85,16 +65,36 @@ public class AlarmService extends Service {
         return null;
     }
 
-    private void startPlay(){
+    private void createNotificationChannel() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelId = "AlarmServicechannelID";
+            NotificationChannel notificationChannel = new NotificationChannel(channelId, "알람", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+    }
+
+    private Notification createNotification() {
+        return new NotificationCompat.Builder(this, "AlarmServicechannelID")
+                .setContentTitle("알림")
+                .setContentText("기상 시간입니다.")
+                .setAutoCancel(true)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .build();
+    }
+
+    private void startPlay() {
         mediaPlayer = MediaPlayer.create(this, R.raw.a);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
     }
 
-    private void stopPlay(){
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+    private void stopPlay() {
+        if (mediaPlayer != null) {
             mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
         }
     }
-
 }

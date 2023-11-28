@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViews;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -22,7 +21,7 @@ public class AlarmWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
-        Log.i(TAG, "updateAppWidget");
+        Log.e(TAG, "updateAppWidget");
 
         try {
 
@@ -30,16 +29,17 @@ public class AlarmWidget extends AppWidgetProvider {
             remoteViews.setTextViewText(R.id.tv1, getTimeDate());
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
 
-        }catch (Exception ex){
-            Log.i(TAG, ex.getMessage().toString());
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage().toString());
         }
-
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
-        Log.i(TAG, "onUpdate");
+        Log.e(TAG, "onUpdate");
+
+        //1분에 한번씩 시간 업데이트
 
         try {
 
@@ -48,33 +48,35 @@ public class AlarmWidget extends AppWidgetProvider {
             }
 
             Intent intent = new Intent(context, AlarmReceiver.class);
-            pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), lMin, pendingIntent);
 
-        }catch (Exception ex){
-            Log.i(TAG, ex.getMessage().toString());
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage().toString());
         }
     }
 
     @Override
     public void onEnabled(Context context) {
-        Log.i(TAG, "onEnabled");
+
+        Log.e(TAG, "onEnabled");
     }
 
     @Override
     public void onDisabled(Context context) {
-        Log.i(TAG, "onDisabled");
+
+        Log.e(TAG, "onDisabled");
 
         try {
 
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             alarmManager.cancel(pendingIntent);
 
-        }catch (Exception ex){
-            Log.i(TAG, ex.getMessage().toString());
+        } catch (Exception ex) {
+            Log.e(TAG, ex.getMessage().toString());
         }
     }
 
@@ -82,6 +84,5 @@ public class AlarmWidget extends AppWidgetProvider {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
         return dateFormat.format(new Date());
     }
-
 }
 

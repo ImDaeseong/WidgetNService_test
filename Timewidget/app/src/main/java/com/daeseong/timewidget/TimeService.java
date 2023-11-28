@@ -27,7 +27,6 @@ public class TimeService extends Service {
     public TimeService() {
 
         Log.e(TAG, "TimeService");
-
     }
 
     @Override
@@ -78,7 +77,7 @@ public class TimeService extends Service {
             //클릭이벤트
             Intent intent = new Intent(this, TimeWidget.class);
             intent.setAction("TimeWidget.TextView.CLICK");
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
             view.setOnClickPendingIntent(R.id.tvTime, pendingIntent);
             view.setOnClickPendingIntent(R.id.tvDate, pendingIntent);
 
@@ -86,10 +85,9 @@ public class TimeService extends Service {
             AppWidgetManager manager = AppWidgetManager.getInstance(this);
             manager.updateAppWidget(thisWidget, view);
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, "updateWidgetView:" + ex.getMessage().toString());
         }
-
     }
 
     private static String getTimeDate() {
@@ -118,10 +116,9 @@ public class TimeService extends Service {
             timer = new Timer();
             timer.schedule(timerTask, 0, 10000);
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, "stopTimer:" + ex.getMessage().toString());
         }
-
     }
 
     public void stopTimer(){
@@ -139,34 +136,30 @@ public class TimeService extends Service {
                 timer = null;
             }
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, "stopTimer:" + ex.getMessage().toString());
         }
-
     }
 
     public void registerAlarm() {
 
         Intent intent = new Intent(TimeService.this, RestartService.class);
         intent.setAction("ACTION.RestartService");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(TimeService.this, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(TimeService.this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         long elapsedRealtime = SystemClock.elapsedRealtime();
         elapsedRealtime += 1 * 1000;
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         //알람 등록
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, elapsedRealtime, 10 * 1000, pendingIntent);
-
     }
 
     public void unregisterAlarm() {
 
         Intent intent = new Intent(TimeService.this, RestartService.class);
         intent.setAction("ACTION.RestartService");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(TimeService.this, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(TimeService.this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         //알람 취소
         alarmManager.cancel(pendingIntent);
-
     }
-
 }

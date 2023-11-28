@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:initialKeyguardLayout="@layout/alarm_app_widget"
+<appwidget-provider
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="294dp"
+    android:minHeight="72dp"
+    android:updatePeriodMillis="0"
     android:initialLayout="@layout/alarm_app_widget"
-    android:minWidth="40dp"
-    android:minHeight="40dp"
-    android:previewImage="@drawable/example_appwidget_preview"
+    android:configure="com.daeseong.alarmservice.AlarmAppWidget"
     android:resizeMode="horizontal|vertical"
-    android:updatePeriodMillis="86400000"
-    android:widgetCategory="home_screen"></appwidget-provider>
+    android:widgetCategory="home_screen">
+</appwidget-provider>

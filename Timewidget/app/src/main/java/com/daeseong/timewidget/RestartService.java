@@ -13,17 +13,9 @@ public class RestartService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Log.e(TAG, "onReceive:" + intent.getAction());
+        //Log.e(TAG, "onReceive:" + intent.getAction());
 
-        if(intent.getAction().equals("ACTION.RestartService")){
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(new Intent(context, TimeService.class));
-            } else {
-                context.startService(new Intent(context, TimeService.class));
-            }
-
-        } else  if(intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)){
+        if (intent.getAction().equals("ACTION.RestartService")) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(new Intent(context, TimeService.class));
@@ -31,8 +23,14 @@ public class RestartService extends BroadcastReceiver {
                 context.startService(new Intent(context, TimeService.class));
             }
 
+        } else  if(intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(new Intent(context, TimeService.class));
+            } else {
+                context.startService(new Intent(context, TimeService.class));
+            }
         }
-
     }
 
 }
